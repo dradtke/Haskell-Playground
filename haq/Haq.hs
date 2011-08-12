@@ -10,4 +10,5 @@ main = do
     args <- getArgs
     putStrLn $ haqify (head args)
 
+haqify :: String -> String
 haqify s = "Haq! " ++ s
