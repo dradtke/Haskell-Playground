@@ -1,3 +1,8 @@
+-- | Haq.hs
+-- | ------
+-- | A modified hello world. Prints the first argument
+-- | prepended with "Haq! "
+
 import System.Environment
 
 main :: IO ()

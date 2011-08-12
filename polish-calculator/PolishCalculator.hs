@@ -5,6 +5,7 @@
 
 import Data.List
 
+main :: IO ()
 main = do
     -- Read lines and evaluate each one
     input <- getLine

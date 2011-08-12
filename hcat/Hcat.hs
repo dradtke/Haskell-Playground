@@ -1,9 +1,13 @@
+-- | Hcat.hs
+-- | -------
+-- | Haskell cat. Takes a list of files as arguments and
+-- | prints their contents.
+
 import System.Directory
 import System.Environment
 import System.IO
 import System.IO.Error
 
--- | Main
 main :: IO ()
 main = do
     args <- getArgs
@@ -12,7 +16,7 @@ main = do
         then error "No files were supplied"
         else catAll args
 
--- | Takes a list of files and calles 'catFile' on each one in turn
+-- | Takes a list of file names and calles 'catFile' on each one in turn
 catAll :: [String] -> IO ()
 catAll (x:rest) = do
     catFile' x $ (length rest) /= 0
