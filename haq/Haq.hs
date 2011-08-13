@@ -6,9 +6,8 @@
 import System.Environment
 
 main :: IO ()
-main = do
-    args <- getArgs
-    putStrLn $ haqify (head args)
+main = do args <- getArgs
+          putStrLn $ haqify (head args)
 
 haqify :: String -> String
 haqify s = "Haq! " ++ s

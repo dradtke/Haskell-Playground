@@ -5,16 +5,16 @@
 
 import Data.List
 
+-- | The main method just repeatedly takes input,
+-- | exiting once blank input is provided
 main :: IO ()
-main = do
-    -- Read lines and evaluate each one
-    input <- getLine
-    if null input
-        then return ()
-        else do
-            let answer = solveRPN input
-            putStrLn $ "Answer = " ++ show answer
-            main
+main = do input <- getLine
+          if null input
+              then return ()
+              else do
+                  let answer = solveRPN input
+                  putStrLn $ "Answer = " ++ show answer
+                  main
 
 -- | Takes a string representing an expression and returns its result
 solveRPN :: String -> Float

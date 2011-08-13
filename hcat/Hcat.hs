@@ -9,24 +9,21 @@ import System.IO
 import System.IO.Error
 
 main :: IO ()
-main = do
-    args <- getArgs
-    -- Make sure something was supplied to arguments
-    if null args
-        then error "No files were supplied"
-        else catAll args
+main = do args <- getArgs
+          -- Make sure something was supplied to arguments
+          if null args
+              then error "No files were supplied"
+              else catAll args
 
 -- | Takes a list of file names and calles 'catFile' on each one in turn
 catAll :: [String] -> IO ()
-catAll (x:rest) = do
-    catFile' x $ (length rest) /= 0
-    catAll rest
+catAll (x:rest) = do catFile' x $ (length rest) /= 0
+                     catAll rest
 catAll x = return ()
 
 -- | Prints a file's contents, with or without an additional newline
 catFile' :: String -> Bool -> IO ()
-catFile' fileName extraNewline = do
-    putStrLn $ "-- " ++ fileName ++ " --"
+catFile' fileName extraNewline = do putStrLn $ "-- " ++ fileName ++ " --"
     -- use putStrLn only if 'extraNewline' is true, putStr otherwise
     let printMethod = if extraNewline then putStrLn else putStr
     -- print the contents, or an error message should something fail
