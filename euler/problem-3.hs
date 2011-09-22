@@ -1,4 +1,5 @@
 -- | Solution to Project Euler problem #3
+-- | SOLVED
 
 import Array
 
@@ -14,7 +15,7 @@ main = do
 getLargestPrimeFactor :: Integer -> Integer
 getLargestPrimeFactor x = f x primeList
     where
-        primeList = reverse $ primesToNA $ rootFloor x
+        primeList = reverse $ primesTo $ rootFloor x
         f x (p:rest) = if (mod x p) == 0
                            then p
                            else f x rest
@@ -27,19 +28,21 @@ rootFloor x = floor $ sqrt $ fromIntegral x
 -- | Returns true if x is prime, false otherwise
 isPrime :: Integer -> Bool
 isPrime x = f x primeList
-    where primeList = primesToNA $ rootFloor x
+    where primeList = primesTo $ rootFloor x
           f x (p:rest) = if (mod x p) == 0
                              then False
                              else f x rest
           f _ _ = True
 
--- | No fucking idea how this thing works, but it does.
-primesToNA n = 2: [i | i <- [3,5..n], ar ! i]
-   where
-    ar = f 5 $ accumArray (\ a b -> False) True (3,n) 
-                        [(i,()) | i <- [9,15..n]]
-    f p a | q > n = a
-          | True  = if null x then a' else f (head x) a'
-      where q = p*p
-            a'= a // [(i,False) | i <- [q,q+2*p..n]]
-            x = [i | i <- [p+2,p+4..n], a' ! i]
+-- | I have a slightly better idea of how this one works...
+primesTo :: Integer -> [Integer]
+primesTo m = 2 : sieve [3,5..m]  where
+    sieve []     = []
+    sieve (p:xs) = p : sieve (xs `minus` [p*p,p*p+2*p..m])
+
+minus :: (Ord t) => [t] -> [t] -> [t]
+minus (x:xs) (y:ys) = case (compare x y) of 
+          LT -> x : minus  xs  (y:ys)
+          EQ ->     minus  xs     ys 
+          GT ->     minus (x:xs)  ys
+minus  xs     _     = xs
