@@ -23,13 +23,13 @@ catAll x = return ()
 
 -- | Prints a file's contents, with or without an additional newline
 catFile' :: String -> Bool -> IO ()
-catFile' fileName extraNewline = do putStrLn $ "-- " ++ fileName ++ " --"
-    -- use putStrLn only if 'extraNewline' is true, putStr otherwise
-    let printMethod = if extraNewline then putStrLn else putStr
-    -- print the contents, or an error message should something fail
+catFile' fileName extraNewline = 
     catch (do contents <- readFile fileName
-              printMethod contents)
-          (\e -> printMethod $ ioeGetErrorString e ++ "\n")
+              show' contents)
+          (\e -> show' $ ioeGetErrorString e ++ "\n")
+    where show' str = do
+              putStrLn $ "-- " ++ fileName ++ " --"
+              (if extraNewline then putStrLn else putStr) str
 
 -- | Prints a file's contents with no additional newline
 catFile :: String -> IO ()
