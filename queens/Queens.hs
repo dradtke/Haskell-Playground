@@ -27,14 +27,14 @@ queens :: Int -> [Int] -> Maybe ([Int])
 queens n stack
     | n < 4             = Nothing
     | length stack == n = Just stack
-    | otherwise         = loop 0 stack
-    where loop i s = if i >= n
+    | otherwise         = loop 0
+    where loop i = if i >= n
               then Nothing
-              else if isValid s i
-                  then case queens n (s++[i]) of
-                       Just s' -> Just s'
-                       Nothing -> loop (i+1) s
-                  else loop (i+1) s
+              else if isValid stack i
+                  then case queens n (stack ++ [i]) of
+                       Just s  -> Just s
+                       Nothing -> loop (i+1)
+                  else loop (i+1)
                     
 isValid :: [Int] -> Int -> Bool
 isValid [] _ = True
