@@ -20,8 +20,11 @@ main = do
     args <- getArgs
     let n = case args of [] -> 8
                          (a:rgs) -> read a :: Int
-    let result = queens n []
+    let result = solveQueens n
     putStrLn $ show result
+
+solveQueens :: Int -> Maybe ([Int])
+solveQueens n = queens n []
 
 queens :: Int -> [Int] -> Maybe ([Int])
 queens n stack
