@@ -5,46 +5,46 @@
 -- | no two queens are attacking each other, which means they
 -- | cannot share the same row, column, or diagonal.
 -- |
--- | The solution is represented as a column-indexed list of
--- | rows, so the 4x4 solution of [1,3,0,2] is equivalent
--- | to (0,1), (1,3), (2,0), and (3,2).
--- |
 -- | When called with no arguments, it calculates a solution
 -- | for N = 8. Other values of N can be passed in as the
 -- | first command-line argument.
+-- |
+-- | An alternative solution for testing the diagonal was attempted:
+-- |   (y2 - y1) + x1 == x2
+-- | but ultimately failed. The solution for queens 8 resulted in
+-- | a diagonal conflict between (3,7) and (4,6):
+-- |
+-- | Just [(0,0),(1,2),(2,5),(3,7),(4,6),(5,3),(6,1),(7,4)]
+-- | 
 
 import System.Environment
+
+type Square = (Int,Int)
 
 main :: IO ()
 main = do
     args <- getArgs
     let n = case args of [] -> 8
                          (a:rgs) -> read a :: Int
-    let result = solveQueens n
-    putStrLn $ show result
+    putStrLn $ show (solveQueens n)
 
-solveQueens :: Int -> Maybe ([Int])
-solveQueens n = queens n []
+solveQueens :: Int -> Maybe ([Square])
+solveQueens n
+    | n < 4 = Nothing
+    | otherwise = queens (n-1) []
 
-queens :: Int -> [Int] -> Maybe ([Int])
+queens :: Int -> [Square] -> Maybe ([Square])
 queens n stack
-    | n < 4             = Nothing
-    | length stack == n = Just stack
-    | otherwise         = loop 0
-    where loop i = if i >= n
-              then Nothing
-              else if isValid stack i
-                  then case queens n (stack ++ [i]) of
-                       Just s  -> Just s
-                       Nothing -> loop (i+1)
-                  else loop (i+1)
+    | x < 0 = Just stack
+    | otherwise = foldl loop Nothing [0..n]
+    where x = n - length stack
+          loop (Just s) i = Just s
+          loop Nothing  i =
+              if isValid stack (x,i)
+                  then queens n $ (x,i):stack
+                  else Nothing
                     
-isValid :: [Int] -> Int -> Bool
-isValid [] _ = True
-isValid stack element = f stack 0
-    where len = length stack
-          f [] _ = True
-          f (s:tack) y
-              | s == element                           = False
-              | (abs $ element - s) == (abs $ y - len) = False
-              | otherwise                              = f tack (y+1)
+isValid :: [Square] -> Square -> Bool
+isValid stack (x2,y2) = foldr test True stack
+    where test _ False = False
+          test (x1,y1) True = (y1 /= y2) && (abs (y2 - y1) /= abs (x2 - x1))
