@@ -38,10 +38,10 @@ queens n stack
     | x < 0 = Just stack
     | otherwise = foldl loop Nothing [0..n]
     where x = n - length stack
-          loop (Just s) i = Just s
-          loop Nothing  i =
-              if isValid stack (x,i)
-                  then queens n $ (x,i):stack
+          loop (Just s) y = Just s
+          loop Nothing  y =
+              if isValid stack (x,y)
+                  then queens n $ (x,y):stack
                   else Nothing
                     
 isValid :: [Square] -> Square -> Bool
