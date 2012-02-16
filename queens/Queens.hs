@@ -8,18 +8,10 @@
 -- | When called with no arguments, it calculates a solution
 -- | for N = 8. Other values of N can be passed in as the
 -- | first command-line argument.
--- |
--- | An alternative solution for testing the diagonal was attempted:
--- |   (y2 - y1) + x1 == x2
--- | but ultimately failed. The solution for queens 8 resulted in
--- | a diagonal conflict between (3,7) and (4,6):
--- |
--- | Just [(0,0),(1,2),(2,5),(3,7),(4,6),(5,3),(6,1),(7,4)]
--- | 
 
 import System.Environment
 
-type Square = (Int,Int)
+type Queen = (Int,Int)
 
 main :: IO ()
 main = do
@@ -28,15 +20,15 @@ main = do
                          (a:rgs) -> read a :: Int
     putStrLn $ show (solveQueens n)
 
-solveQueens :: Int -> Maybe ([Square])
+solveQueens :: Int -> Maybe [Queen]
 solveQueens n
     | n < 4 = Nothing
-    | otherwise = queens (n-1) []
+    | otherwise = queens n []
 
-queens :: Int -> [Square] -> Maybe ([Square])
+queens :: Int -> [Queen] -> Maybe [Queen]
 queens n stack
-    | x < 0 = Just stack
-    | otherwise = foldl loop Nothing [0..n]
+    | x < 1 = Just stack
+    | otherwise = foldl loop Nothing [1..n]
     where x = n - length stack
           loop (Just s) y = Just s
           loop Nothing  y =
@@ -44,7 +36,8 @@ queens n stack
                   then queens n $ (x,y):stack
                   else Nothing
                     
-isValid :: [Square] -> Square -> Bool
-isValid stack (x2,y2) = foldr test True stack
-    where test _ False = False
-          test (x1,y1) True = (y1 /= y2) && (abs (y2 - y1) /= abs (x2 - x1))
+isValid :: [Queen] -> Queen -> Bool
+isValid stack (x2,y2) = foldl validate True stack
+    where validate False _ = False
+          validate True (x1,y1) =
+              x1 /= x2 && y1 /= y2 && (abs $ y2 - y1) /= (abs $ x2 - x1)
