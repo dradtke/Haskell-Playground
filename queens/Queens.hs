@@ -23,17 +23,17 @@ main = do
 solveQueens :: Int -> Maybe [Queen]
 solveQueens n
     | n < 4 = Nothing
-    | otherwise = queens n []
+    | otherwise = solveQueens' n []
 
-queens :: Int -> [Queen] -> Maybe [Queen]
-queens n stack
+solveQueens' :: Int -> [Queen] -> Maybe [Queen]
+solveQueens' n stack
     | x < 1 = Just stack
     | otherwise = foldl loop Nothing [1..n]
     where x = n - length stack
           loop (Just s) y = Just s
           loop Nothing  y =
               if isValid stack (x,y)
-                  then queens n $ (x,y):stack
+                  then solveQueens' n $ (x,y):stack
                   else Nothing
                     
 isValid :: [Queen] -> Queen -> Bool
