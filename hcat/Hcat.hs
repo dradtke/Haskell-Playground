@@ -3,35 +3,21 @@
 -- | Haskell cat. Takes a list of files as arguments and
 -- | prints their contents.
 
-import System.Directory
+import Control.Monad
 import System.Environment
-import System.IO
-import System.IO.Error
 
 main :: IO ()
 main = do args <- getArgs
           -- Make sure something was supplied to arguments
-          if null args
-              then error "No files were supplied"
-              else catAll args
+          when (null args) $ error "No files were supplied"
+          catAll args
 
--- | Takes a list of file names and calles 'catFile' on each one in turn
+-- | Takes a list of file names and displays each one in turn, appending an
+-- | additional newline to all but the last
 catAll :: [String] -> IO ()
-catAll (x:rest) = do catFile' x $ (length rest) /= 0
-                     catAll rest
-catAll x = return ()
-
--- | Prints a file's contents, with or without an additional newline
-catFile' :: String -> Bool -> IO ()
-catFile' fileName extraNewline = 
-    catch (do contents <- readFile fileName
-              show' contents)
-          (\e -> show' $ ioeGetErrorString e ++ "\n")
-    where show' str = do
-              putStrLn $ "-- " ++ fileName ++ " --"
-              (if extraNewline then putStrLn else putStr) str
-
--- | Prints a file's contents with no additional newline
-catFile :: String -> IO ()
-catFile fileName = catFile' fileName False
-
+catAll [] = return ()
+catAll (x:rest) = catch (do cat x $ (length rest) /= 0 ; catAll rest) handler
+    where handler e = putStrLn $ show e
+          cat f e = do contents <- readFile f
+                       putStrLn $ "-- " ++ f ++ " --"
+                       (if e then putStrLn else putStr) contents
